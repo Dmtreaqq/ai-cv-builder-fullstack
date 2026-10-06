@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import type { Session } from './auth-storage';
 
 export interface User {
   id: string;
@@ -12,7 +13,7 @@ export interface AuthState {
 export type AuthAction = { type: 'login'; user: User } | { type: 'logout' };
 
 export interface AuthContextValue extends AuthState {
-  login: (user: User) => void;
+  login: (session: Session) => void;
   logout: () => void;
 }
 
