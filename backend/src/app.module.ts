@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -5,6 +6,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module.js';
 import { JwtAuthGuard } from './auth/jwt-auth.guard.js';
+import { CvsModule } from './cvs/cvs.module.js';
 import { validate } from './config/env.validation.js';
 import type { EnvironmentVariables } from './config/env.validation.js';
 import { buildTypeOrmOptions } from './database/typeorm-options.js';
@@ -22,9 +24,16 @@ import { UsersModule } from './users/users.module.js';
         autoLoadEntities: true,
       }),
     }),
+    BullModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<EnvironmentVariables, true>) => ({
+        connection: { url: config.get('REDIS_URL', { infer: true }) },
+      }),
+    }),
     ThrottlerModule.forRoot({ throttlers: buildThrottlers() }),
     UsersModule,
     AuthModule,
+    CvsModule,
   ],
   providers: [
     // Order matters: authentication runs first so the throttler can track by user id.

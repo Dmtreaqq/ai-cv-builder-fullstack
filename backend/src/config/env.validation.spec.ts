@@ -33,4 +33,22 @@ describe('validate (env)', () => {
     expect(validate({ ...REQUIRED, NODE_ENV: 'production' }).NODE_ENV).toBe('production');
     expect(() => validate({ ...REQUIRED, NODE_ENV: 'staging' })).toThrow(/NODE_ENV/);
   });
+
+  it('defaults REDIS_URL and accepts redis urls only', () => {
+    expect(validate(REQUIRED).REDIS_URL).toBe('redis://localhost:6379');
+    expect(validate({ ...REQUIRED, REDIS_URL: 'rediss://cache:6380' }).REDIS_URL).toBe(
+      'rediss://cache:6380',
+    );
+    expect(() => validate({ ...REQUIRED, REDIS_URL: 'http://cache' })).toThrow(/REDIS_URL/);
+  });
+
+  it('boots without an Anthropic key and defaults the model', () => {
+    const env = validate(REQUIRED);
+
+    expect(env.ANTHROPIC_API_KEY).toBe('');
+    expect(env.ANTHROPIC_MODEL).toBe('claude-sonnet-5-5');
+    expect(validate({ ...REQUIRED, ANTHROPIC_MODEL: 'claude-opus-5-5' }).ANTHROPIC_MODEL).toBe(
+      'claude-opus-5-5',
+    );
+  });
 });

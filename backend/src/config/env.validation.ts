@@ -1,5 +1,15 @@
 import { plainToInstance, Type } from 'class-transformer';
-import { IsIn, IsInt, IsString, IsUrl, Max, Min, MinLength, validateSync } from 'class-validator';
+import {
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsString,
+  IsUrl,
+  Max,
+  Min,
+  MinLength,
+  validateSync,
+} from 'class-validator';
 
 export const NODE_ENVS = ['development', 'production', 'test'] as const;
 
@@ -20,6 +30,18 @@ export class EnvironmentVariables {
 
   @IsIn(NODE_ENVS)
   NODE_ENV: (typeof NODE_ENVS)[number] = 'development';
+
+  @IsString()
+  @IsUrl({ protocols: ['redis', 'rediss'], require_tld: false })
+  REDIS_URL: string = 'redis://localhost:6379';
+
+  // Empty is allowed: the app still boots and generation fails with a clear message.
+  @IsString()
+  ANTHROPIC_API_KEY: string = '';
+
+  @IsString()
+  @IsNotEmpty()
+  ANTHROPIC_MODEL: string = 'claude-sonnet-5-5';
 }
 
 export function validate(config: Record<string, unknown>): EnvironmentVariables {
