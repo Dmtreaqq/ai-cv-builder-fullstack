@@ -13,6 +13,9 @@ export interface EditorContextValue {
   dispatch: Dispatch<EditorAction>;
   saveStatus: SaveStatus;
   flush: () => Promise<void>;
+  answer: (questionId: string, answer: string) => Promise<void>;
+  skip: (questionId: string) => Promise<void>;
+  reopen: (questionId: string) => Promise<void>;
 }
 
 export const EditorContext = createContext<EditorContextValue | null>(null);

@@ -3,6 +3,7 @@ import { PageHeader } from '@/components/page-header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { CvSheet } from './cv-sheet';
+import { QuestionsPanel } from './questions-panel';
 import { SaveIndicator } from './save-indicator';
 import { SectionIndex } from './section-index';
 import { ContactSection } from './sections/contact-section';
@@ -56,6 +57,7 @@ export function EditorLayout() {
           >
             <SectionIndex />
             <div className="flex min-w-0 flex-col gap-6">
+              <QuestionsPanel />
               <ContactSection />
               <SummarySection />
               <ExperienceSection />
