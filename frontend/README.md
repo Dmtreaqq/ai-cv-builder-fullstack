@@ -62,6 +62,11 @@ to an A4 PDF with selectable text. Fonts are TTFs in `public/fonts/` (Source Ser
 SIL Open Font License, see the `*-OFL.txt` files there). Colors are read from the theme tokens at
 export time.
 
+The editor preview is the same PDF: `pdf/use-pdf-blob.ts` re-renders it 400 ms after the last edit
+and `pdf/pdf-preview.tsx` draws its pages to canvas with `react-pdf` (pdf.js). Both are lazy-loaded,
+so what you see, page breaks included, is exactly what downloads. Change the layout only in
+`cv-document.tsx`.
+
 ## Structure
 
 ```
@@ -114,7 +119,8 @@ The CV itself is the hero, shown as a paper sheet.
 - Terracotta (`text-brand`) is only for links, step numerals, focus rings and small highlights. Don't
   use it for large fills or body text.
 
-**Editor layout:** on `lg+`, a sticky "Jump to" section index on the left, the form in the middle
-(with the "Needs your input" panel on top) and a sticky live paper preview on the right, with
-**Download PDF** as the primary ink pill. Below `lg`, the index becomes a scrollable chip row and a
-sticky bar switches between **Edit** and **Preview**.
+**Editor layout:** the form (with the "Needs your input" panel on top) and the live PDF preview,
+with **Download PDF** as the primary ink pill. On `lg+`, a toggle in the header picks **Side by
+side** (form left, sticky preview right) or **Tabs** (one centred column, a sticky bar switches
+between **Edit** and **Preview**). The choice is remembered in `localStorage`. Below `lg` the editor
+always uses the tabs.

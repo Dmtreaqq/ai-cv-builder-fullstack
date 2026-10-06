@@ -2,7 +2,6 @@ import { Download } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useEditor } from '../use-editor';
-import { readPdfColors } from './pdf-colors';
 import { pdfFileName } from './pdf-file-name';
 
 function saveBlob(blob: Blob, fileName: string) {
@@ -23,11 +22,8 @@ export function DownloadPdfButton({ size = 'default' }: { size?: 'default' | 'sm
     setPending(true);
     setFailed(false);
     try {
-      const [{ pdf }, { CvDocument }] = await Promise.all([
-        import('@react-pdf/renderer'),
-        import('./cv-document'),
-      ]);
-      const blob = await pdf(<CvDocument content={content} colors={readPdfColors()} />).toBlob();
+      const { renderCvPdf } = await import('./render-cv-pdf');
+      const blob = await renderCvPdf(content);
       saveBlob(blob, pdfFileName(content.contact.fullName, targetRole));
     } catch {
       setFailed(true);
