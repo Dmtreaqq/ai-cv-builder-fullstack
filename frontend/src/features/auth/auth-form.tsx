@@ -50,7 +50,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const credentials = { email: email.trim(), password };
-    const nextErrors = validateCredentials(credentials);
+    const nextErrors = validateCredentials(credentials, mode);
     setErrors(nextErrors);
     setFormError(null);
     if (Object.keys(nextErrors).length > 0) {
@@ -60,7 +60,8 @@ export function AuthForm({ mode }: AuthFormProps) {
     setPending(true);
     try {
       const request = mode === 'login' ? loginRequest : registerRequest;
-      login(await request(credentials));
+      const { user } = await request(credentials);
+      login(user);
       navigate(from ? `${from.pathname}${from.search}` : '/cvs', { replace: true });
     } catch (error) {
       setFormError(error instanceof ApiError ? error.message : 'Something went wrong. Try again.');

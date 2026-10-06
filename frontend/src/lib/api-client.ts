@@ -1,5 +1,3 @@
-import { loadSession } from '@/features/auth/auth-storage';
-
 export class ApiError extends Error {
   readonly status: number;
 
@@ -18,6 +16,8 @@ interface RequestOptions {
   signal?: AbortSignal;
 }
 
+const API_PREFIX = '/api/v1';
+
 let unauthorizedHandler: (() => void) | null = null;
 
 export function setUnauthorizedHandler(handler: (() => void) | null) {
@@ -27,10 +27,6 @@ export function setUnauthorizedHandler(handler: (() => void) | null) {
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = 'GET', body, signal } = options;
   const headers = new Headers({ Accept: 'application/json' });
-  const token = loadSession()?.token;
-  if (token) {
-    headers.set('Authorization', `Bearer ${token}`);
-  }
 
   let payload: BodyInit | undefined;
   if (body instanceof FormData) {
@@ -40,7 +36,13 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
     payload = JSON.stringify(body);
   }
 
-  const response = await fetch(`/api${path}`, { method, headers, body: payload, signal });
+  const response = await fetch(`${API_PREFIX}${path}`, {
+    method,
+    headers,
+    body: payload,
+    signal,
+    credentials: 'same-origin',
+  });
 
   if (response.status === 401) {
     unauthorizedHandler?.();

@@ -1,11 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
+import { loginRequest, logoutRequest } from '@/features/auth/auth-api';
 import type { User } from '@/features/auth/auth-context';
 import { AuthProvider } from '@/features/auth/auth-provider';
+import { listCvs } from '@/features/cvs/cvs-api';
+import { ApiError } from '@/lib/api-client';
+import { makeUser } from '@/test/fixtures';
 import { renderApp } from '@/test/render-app';
-import { signIn } from '@/test/seed';
 import { Layout } from './layout';
+
+vi.mock('@/features/auth/auth-api');
+vi.mock('@/features/cvs/cvs-api');
 
 function renderLayout(initialUser: User | null) {
   render(
@@ -29,31 +35,45 @@ describe('Layout', () => {
   });
 
   it('shows the email and a Log out button when signed in', () => {
-    renderLayout({ id: '1', email: 'user@example.com' });
+    renderLayout(makeUser({ email: 'user@example.com' }));
     expect(screen.getByText('user@example.com')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Log out' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Register' })).not.toBeInTheDocument();
   });
 
-  it('logs the user out', async () => {
+  it('clears the session cookie and logs the user out', async () => {
     const user = userEvent.setup();
-    renderLayout({ id: '1', email: 'user@example.com' });
+    vi.mocked(logoutRequest).mockResolvedValue(undefined);
+    renderLayout(makeUser({ email: 'user@example.com' }));
 
     await user.click(screen.getByRole('button', { name: 'Log out' }));
 
+    expect(await screen.findByRole('link', { name: 'Log in' })).toBeInTheDocument();
+    expect(logoutRequest).toHaveBeenCalledTimes(1);
     expect(screen.queryByText('user@example.com')).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Log in' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Register' })).toBeInTheDocument();
+  });
+
+  it('still logs out locally when the logout request fails', async () => {
+    const user = userEvent.setup();
+    vi.mocked(logoutRequest).mockRejectedValue(new ApiError(500, 'Server error'));
+    renderLayout(makeUser());
+
+    await user.click(screen.getByRole('button', { name: 'Log out' }));
+
+    expect(await screen.findByRole('link', { name: 'Log in' })).toBeInTheDocument();
   });
 
   it('does not carry the protected page over to the next login', async () => {
     const user = userEvent.setup();
-    signIn('first@example.com');
-    renderApp('/cvs/new');
+    vi.mocked(logoutRequest).mockResolvedValue(undefined);
+    vi.mocked(loginRequest).mockResolvedValue({ user: makeUser({ email: 'second@example.com' }) });
+    vi.mocked(listCvs).mockResolvedValue([]);
+    renderApp('/cvs/new', makeUser({ email: 'first@example.com' }));
 
     await user.click(screen.getByRole('button', { name: 'Log out' }));
     expect(
-      screen.getByRole('heading', { name: 'A CV written for the role you want' }),
+      await screen.findByRole('heading', { name: 'A CV written for the role you want' }),
     ).toBeVisible();
 
     await user.click(screen.getByRole('link', { name: 'Log in' }));

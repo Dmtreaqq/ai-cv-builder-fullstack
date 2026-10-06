@@ -1,8 +1,8 @@
-import { buildCvContent } from '@/mocks/fixtures/persona';
+import { makeContent } from '@/test/fixtures';
 import { editorReducer, moveItem, type EditorState } from './editor-reducer';
 
 function initialState(): EditorState {
-  return { content: buildCvContent('Staff Engineer'), questions: [], highlight: null };
+  return { content: makeContent(), questions: [], highlight: null };
 }
 
 const ids = (items: { id: string }[]) => items.map((item) => item.id);

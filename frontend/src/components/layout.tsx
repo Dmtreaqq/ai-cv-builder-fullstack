@@ -1,13 +1,19 @@
 import { startTransition } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
+import { logoutRequest } from '@/features/auth/auth-api';
 import { useAuth } from '@/features/auth/use-auth';
 
 export function Layout() {
-  const { user, logout } = useAuth();
+  const { status, user, logout } = useAuth();
   const navigate = useNavigate();
 
-  function handleLogout() {
+  async function handleLogout() {
+    try {
+      await logoutRequest();
+    } catch {
+      // The cookie expires on its own; logging out locally is what matters here.
+    }
     // One transition, so ProtectedRoute never sees a logged-out user on this page and records it as `from`.
     startTransition(() => {
       navigate('/');
@@ -23,7 +29,7 @@ export function Layout() {
             AI CV Builder
           </Link>
           <nav aria-label="Account" className="flex min-w-0 items-center gap-1 sm:gap-2">
-            {user ? (
+            {status === 'loading' ? null : user ? (
               <>
                 <span className="hidden truncate text-sm text-muted-foreground md:inline">
                   {user.email}
@@ -33,7 +39,7 @@ export function Layout() {
                     My CVs
                   </NavLink>
                 </Button>
-                <Button variant="ghost" onClick={handleLogout}>
+                <Button variant="ghost" onClick={() => void handleLogout()}>
                   Log out
                 </Button>
               </>

@@ -1,11 +1,14 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { getCv } from '@/features/cvs/cvs-api';
+import { makeCv, makeUser } from '@/test/fixtures';
 import { renderApp } from '@/test/render-app';
-import { seedCv, signIn } from '@/test/seed';
+
+vi.mock('@/features/cvs/cvs-api');
 
 async function openEditor() {
-  seedCv(signIn().id);
-  const view = renderApp('/cvs/cv-1');
+  vi.mocked(getCv).mockResolvedValue(makeCv());
+  const view = renderApp('/cvs/cv-1', makeUser());
   await screen.findByRole('heading', { level: 1, name: 'Senior Backend Engineer CV' });
   return view;
 }
@@ -43,7 +46,7 @@ describe('EditorLayout', () => {
     await user.click(screen.getByRole('button', { name: 'Tabs' }));
     unmount();
 
-    renderApp('/cvs/cv-1');
+    renderApp('/cvs/cv-1', makeUser());
 
     expect(await screen.findByRole('button', { name: 'Tabs' })).toHaveAttribute(
       'aria-pressed',

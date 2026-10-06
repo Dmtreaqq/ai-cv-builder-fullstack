@@ -1,28 +1,30 @@
 import { createContext } from 'react';
-import type { Session } from './auth-storage';
 
 export interface User {
   id: string;
   email: string;
 }
 
+export type AuthStatus = 'loading' | 'authenticated' | 'anonymous';
+
 export interface AuthState {
+  status: AuthStatus;
   user: User | null;
 }
 
 export type AuthAction = { type: 'login'; user: User } | { type: 'logout' };
 
 export interface AuthContextValue extends AuthState {
-  login: (session: Session) => void;
+  login: (user: User) => void;
   logout: () => void;
 }
 
 export function authReducer(_state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
     case 'login':
-      return { user: action.user };
+      return { status: 'authenticated', user: action.user };
     case 'logout':
-      return { user: null };
+      return { status: 'anonymous', user: null };
   }
 }
 
