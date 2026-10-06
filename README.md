@@ -1,9 +1,5 @@
 # AI CV Builder
 
-Paste your background or upload your current CV, name the role you want, and get a tailored,
-one-page CV written by Claude. The app then asks about the gaps it found (missing dates, vague
-bullets, likely skills), rewrites the right field with each answer, and exports an A4 PDF.
-
 - `frontend/`: React 19 + TypeScript SPA (Vite). See [frontend/README.md](frontend/README.md).
 - `backend/`: NestJS 12 API with Postgres, Redis/BullMQ and the Anthropic API. See
   [backend/README.md](backend/README.md).
@@ -48,14 +44,13 @@ npm install
 npm run dev                               # http://localhost:5173
 ```
 
+The frontend needs no `.env`. Copy `frontend/.env.example` only if the backend runs somewhere
+other than `http://localhost:3000`, and set `VITE_API_PROXY_TARGET` to its URL.
+
 ## How I built it
 
-**I started with the frontend.** The product is mostly a UX problem (compose, watch it generate,
-fix the gaps, export), so I built every flow first against an MSW mock API that answered on the
-same `/api/v1` routes the real backend would. Working through the screens told me exactly what
-the API had to return (the CV shape, the generation stages, how a question points at a field)
-before I wrote any server code. The mock also made the failure and retry paths easy to test.
-Then I built the backend to that contract and replaced the mocks with real calls.
+**I started with the frontend.** 
+Then I built the backend
 
 **What I decided, and why:**
 
