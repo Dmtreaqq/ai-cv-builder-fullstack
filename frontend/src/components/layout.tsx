@@ -1,3 +1,4 @@
+import { startTransition } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/use-auth';
@@ -7,8 +8,11 @@ export function Layout() {
   const navigate = useNavigate();
 
   function handleLogout() {
-    logout();
-    navigate('/');
+    // One transition, so ProtectedRoute never sees a logged-out user on this page and records it as `from`.
+    startTransition(() => {
+      navigate('/');
+      logout();
+    });
   }
 
   return (

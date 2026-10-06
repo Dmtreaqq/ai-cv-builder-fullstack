@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { User } from '@/features/auth/auth-context';
 import { AuthProvider } from '@/features/auth/auth-provider';
+import { renderApp } from '@/test/render-app';
+import { signIn } from '@/test/seed';
 import { Layout } from './layout';
 
 function renderLayout(initialUser: User | null) {
@@ -42,5 +44,23 @@ describe('Layout', () => {
     expect(screen.queryByText('user@example.com')).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Log in' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Register' })).toBeInTheDocument();
+  });
+
+  it('does not carry the protected page over to the next login', async () => {
+    const user = userEvent.setup();
+    signIn('first@example.com');
+    renderApp('/cvs/new');
+
+    await user.click(screen.getByRole('button', { name: 'Log out' }));
+    expect(
+      screen.getByRole('heading', { name: 'A CV written for the role you want' }),
+    ).toBeVisible();
+
+    await user.click(screen.getByRole('link', { name: 'Log in' }));
+    await user.type(screen.getByLabelText('Email'), 'second@example.com');
+    await user.type(screen.getByLabelText('Password'), 'secret');
+    await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Your CVs' })).toBeInTheDocument();
   });
 });

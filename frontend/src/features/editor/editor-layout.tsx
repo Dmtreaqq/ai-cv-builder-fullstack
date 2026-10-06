@@ -53,7 +53,7 @@ export function EditorLayout() {
           </TabsList>
           <DownloadPdfButton size="sm" />
         </div>
-        <div className="grid gap-8 lg:grid-cols-[150px_minmax(0,1fr)_minmax(0,0.85fr)] lg:items-start">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[150px_minmax(0,1fr)_minmax(0,0.85fr)] lg:items-start">
           <TabsContent
             value="edit"
             forceMount

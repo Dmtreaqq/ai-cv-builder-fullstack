@@ -30,7 +30,7 @@ export function SectionIndex() {
       <p className="mb-3 hidden text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase lg:block">
         Jump to
       </p>
-      <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:flex-col lg:gap-0.5 lg:overflow-visible lg:px-0">
+      <ul className="relative -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:-mx-6 sm:px-6 lg:mx-0 lg:flex-col lg:gap-0.5 lg:overflow-visible lg:px-0">
         {EDITOR_SECTIONS.map(({ id, label }) => {
           const count = openCounts.get(id) ?? 0;
           const isActive = active === id;
