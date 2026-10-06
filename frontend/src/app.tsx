@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router';
-import { Layout } from './components/Layout.tsx';
-import { LoginPage } from './features/auth/LoginPage.tsx';
-import { RegisterPage } from './features/auth/RegisterPage.tsx';
-import { LandingPage } from './pages/LandingPage.tsx';
-import { NotFoundPage } from './pages/NotFoundPage.tsx';
+import { Layout } from '@/components/layout';
+import { LoginPage } from '@/features/auth/login-page';
+import { RegisterPage } from '@/features/auth/register-page';
+import { LandingPage } from '@/pages/landing-page';
+import { NotFoundPage } from '@/pages/not-found-page';
 
 export function App() {
   return (

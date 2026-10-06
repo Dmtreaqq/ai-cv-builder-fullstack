@@ -11,12 +11,14 @@ Run npm commands from inside the project folder (e.g. `cd frontend && npm run te
 
 - **Comments:** don't add comments unless the logic is complex or non-obvious. Prefer clear names over explanatory comments.
 - **Components:** function components only. Use named exports (`export function LoginPage()`), not default exports.
-- **One component per file.** Contexts, reducers, types and hooks go in their own `.ts` files (oxlint `only-export-components`).
-- **Imports:** include the file extension (`./App.tsx`, `./useAuth.ts`). Import routing from `react-router`.
+- **One component per file.** Contexts, reducers, types and hooks go in their own `.ts` files (oxlint `only-export-components`). Exception: `src/components/ui/` (see Styling).
+- **File names:** kebab-case (`login-page.tsx`, `use-auth.ts`, `auth-context.ts`).
+- **Imports:** extensionless. Use the `@/` alias (`@/features/auth/use-auth`) across folders and `./` within a folder. Import routing from `react-router`.
 - **Types:** use `import type` for type-only imports. Avoid `any`.
 - **React 19:** use `use(Context)` and `<Context value>`. Keep state in React Context + `useReducer`. No state libraries.
 - **Folders:** feature code lives in `src/features/<feature>/` (pages, hooks, context). Shared UI goes in `src/components/`, and non-feature pages in `src/pages/`.
-- **Styling:** plain CSS in `src/index.css` with BEM-like class names (`layout__header`). Use the CSS custom properties for colors.
+- **Styling:** Tailwind CSS v4 utilities plus shadcn/ui (`npx shadcn@latest add <component>`). `src/components/ui/` is shadcn-generated code that we own and edit. It is exempt from one-component-per-file and the `only-export-components` lint rule. Theme tokens live in `src/index.css`.
+- **Colors and fonts:** use the theme tokens (`bg-background`, `text-foreground`, `text-muted-foreground`, `bg-card`, `text-brand`, `font-serif`), never raw hex or rgb values. The app is **light only**: don't add dark-mode styles. Design direction: see "Paper & Ink" in `frontend/README.md`.
 - **API:** call the backend via relative `/api/*` URLs (Vite proxies them in dev). Never hardcode the backend host.
 - **Tests:** colocate them as `*.test.tsx`. Query by role or text with React Testing Library.
 - **Formatting:** Prettier (single quotes, semicolons, trailing commas, width 100). Don't hand-format against it.

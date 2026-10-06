@@ -1,77 +1,78 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+/* Light only: no element ever gets .dark, so shadcn's dark: utilities stay inert. */
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-heading: var(--font-serif);
+  --color-brand: var(--brand);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
 :root {
-  --color-text: #1f2328;
-  --color-muted: #59636e;
-  --color-bg: #ffffff;
-  --color-border: #d1d9e0;
-  --color-accent: #4f46e5;
-
-  color-scheme: light dark;
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.5;
-  color: var(--color-text);
-  background: var(--color-bg);
-  -webkit-font-smoothing: antialiased;
+  color-scheme: light;
+  --background: #f6f3ec;
+  --foreground: #2b211c;
+  --card: #fffdf8;
+  --card-foreground: #2b211c;
+  --popover: #fffdf8;
+  --popover-foreground: #2b211c;
+  --primary: #2b211c;
+  --primary-foreground: #f6f3ec;
+  --secondary: #ece6da;
+  --secondary-foreground: #2b211c;
+  --muted: #ece6da;
+  --muted-foreground: #6f6258;
+  --accent: #efe4d6;
+  --accent-foreground: #2b211c;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #e2dccf;
+  --input: #e2dccf;
+  --ring: #b5603f;
+  --brand: #b5603f;
+  --radius: 0.875rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-text: #e6edf3;
-    --color-muted: #9198a1;
-    --color-bg: #0d1117;
-    --color-border: #3d444d;
-    --color-accent: #818cf8;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  min-height: 100svh;
-}
-
-a {
-  color: var(--color-accent);
-}
-
-.layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100svh;
-}
-
-.layout__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.layout__brand {
-  font-weight: 700;
-  color: var(--color-text);
-  text-decoration: none;
-}
-
-.layout__nav {
-  display: flex;
-  gap: 1rem;
-}
-
-.layout__nav a.active {
-  font-weight: 600;
-}
-
-.layout__main {
-  flex: 1;
-  width: 100%;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
+  html {
+    @apply font-sans antialiased;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1,
+  h2 {
+    @apply font-serif font-light text-balance;
+  }
 }

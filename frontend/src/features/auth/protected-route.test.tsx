@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { AuthProvider } from './AuthProvider.tsx';
-import type { User } from './authContext.ts';
-import { ProtectedRoute } from './ProtectedRoute.tsx';
+import { AuthProvider } from './auth-provider';
+import type { User } from './auth-context';
+import { ProtectedRoute } from './protected-route';
 
 function renderProtected(initialUser: User | null) {
   render(

@@ -1,5 +1,5 @@
 import { useMemo, useReducer, type ReactNode } from 'react';
-import { AuthContext, authReducer, type User } from './authContext.ts';
+import { AuthContext, authReducer, type User } from './auth-context';
 
 interface AuthProviderProps {
   children: ReactNode;
