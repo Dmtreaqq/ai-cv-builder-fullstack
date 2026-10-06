@@ -7,9 +7,11 @@ React 19 + TypeScript SPA built with Vite, React Router, Tailwind CSS v4 and sha
 ```bash
 cd frontend
 npm install
-cp .env.example .env   # optional, see below
+cp .env.example .env   # optional: only to point the proxy at another backend
 npm run dev
 ```
+
+The dev server runs on `http://localhost:5173` and expects the backend on port 3000.
 
 ## Scripts
 
@@ -24,36 +26,34 @@ npm run dev
 | `npm test`             | Run Vitest in watch mode            |
 | `npm run test:run`     | Run the test suite once             |
 
-## Backend API
+## Running against the backend
 
-The frontend calls relative `/api/*` URLs. In development the Vite dev server proxies them to
+The app needs the NestJS API from `backend/` (see its README): start Postgres and Redis with
+`docker compose up -d` at the repo root, then `npm run start:dev` in `backend/`. Without an
+`ANTHROPIC_API_KEY` everything works except generation, which fails with "AI generation is not
+configured." and offers Retry.
+
+The frontend calls relative `/api/v1/*` URLs. In development the Vite dev server proxies `/api` to
 `VITE_API_PROXY_TARGET` (default `http://localhost:3000`), so no CORS setup is needed.
 
-Every request goes through `src/lib/api-client.ts`, which adds the bearer token and logs the user
-out on a `401`.
+Every request goes through `src/lib/api-client.ts`. It sends the session cookie, turns error
+responses into an `ApiError` carrying the backend's string `message`, and logs the user out on a
+`401`.
 
-## Mock backend (MSW)
+**Session:** the backend keeps the session in an httpOnly `access_token` cookie, so nothing is
+stored in `localStorage`. On load `AuthProvider` asks `GET /auth/me`; protected routes show a
+loading state until it answers. Log out calls `POST /auth/logout`, then clears the local state.
 
-Until the backend exists, [MSW](https://mswjs.io) intercepts `/api/*` in the browser and answers
-from `src/mocks/`. The app code makes real `fetch` calls, so switching to the backend only means
-turning the mocks off.
+**Generation:** creating a CV returns it with `status: 'generating'`. The CV page polls it every
+1.5 s and shows the stage the backend reports, then the editor once it is `ready`, or the error
+with Retry once it has `failed`.
 
-- **On/off:** mocks run unless `VITE_USE_MOCKS=false`. `public/mockServiceWorker.js` is generated
-  by `npx msw init public` and must not be edited.
-- **Data:** handlers persist to `localStorage` under `cvb:mock-db`; the session lives under
-  `cvb:session`. Clear both to start fresh.
-- **Auth:** any email and non-empty password starts a session. The token is
-  `mock.<base64url(email)>`, and CVs belong to a user id hashed from the email, so another email
-  sees none of them.
-- **Generation:** the stage is derived from the time since the job started (about 12 s in total),
-  so progress survives reloads. A background text containing `fail` fails the job; Retry then
-  succeeds.
-- **"AI" output:** every CV is the same persona (`fixtures/persona.ts`) with deliberate gaps that
-  become "Needs your input" questions (`fixtures/questions.ts`). Answers are applied by
-  per-question templates after a 1 s delay.
+## Tests
 
-Tests use the same handlers through `msw/node` (`src/mocks/server.ts`), started in
-`src/test/setup.ts`. `src/test/seed.ts` signs a user in and seeds CVs.
+Vitest with React Testing Library. Tests mock the API modules (`vi.mock('@/features/cvs/cvs-api')`,
+`vi.mock('@/features/auth/auth-api')`) and build data with `src/test/fixtures.ts` (`makeCv`,
+`makeContent`, `makeUser`). `renderApp(path, user)` renders the whole app with a signed-in user, or
+signed out with `null`.
 
 ## PDF export
 
@@ -77,11 +77,10 @@ src/
   components/ui/    shadcn/ui components (generated, then owned)
   lib/              shared helpers (cn, api client, ids, relative time)
   pages/            top-level pages not tied to a feature (landing, 404)
-  features/auth/    session storage, provider, login/register form, protected route
+  features/auth/    auth API, session provider, login/register form, protected route
   features/cvs/     CV types and API, dashboard, composer, generation progress
   features/editor/  editor state, autosave, sections, questions, preview, PDF
-  mocks/            MSW handlers, localStorage db and fixtures
-  test/             test setup and helpers
+  test/             test setup, fixtures and render helper
 ```
 
 Routes: `/cvs` (dashboard), `/cvs/new` (composer) and `/cvs/:id` (generation progress, then the

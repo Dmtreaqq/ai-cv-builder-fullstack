@@ -3,7 +3,7 @@
 Monorepo-style repo with independent projects (no workspaces):
 
 - `frontend/`: React 19 + TypeScript SPA (Vite, React Router, Vitest). See `frontend/README.md`.
-- `backend/`: NestJS 12 API (ESM, TypeORM + Postgres, Jest). See `backend/README.md`. Postgres runs from `docker-compose.yml` at the repo root.
+- `backend/`: NestJS 12 API (ESM, TypeORM + Postgres, BullMQ + Redis, Anthropic SDK, Jest). See `backend/README.md`. Postgres and Redis run from `docker-compose.yml` at the repo root.
 
 Run npm commands from inside the project folder (e.g. `cd frontend && npm run test:run`).
 
@@ -19,8 +19,8 @@ Run npm commands from inside the project folder (e.g. `cd frontend && npm run te
 - **Folders:** feature code lives in `src/features/<feature>/` (pages, hooks, context). Shared UI goes in `src/components/`, and non-feature pages in `src/pages/`.
 - **Styling:** Tailwind CSS v4 utilities plus shadcn/ui (`npx shadcn@latest add <component>`). `src/components/ui/` is shadcn-generated code that we own and edit. It is exempt from one-component-per-file and the `only-export-components` lint rule. Theme tokens live in `src/index.css`.
 - **Colors and fonts:** use the theme tokens (`bg-background`, `text-foreground`, `text-muted-foreground`, `bg-card`, `text-brand`, `font-serif`), never raw hex or rgb values. The app is **light only**: don't add dark-mode styles. Design direction: see "Paper & Ink" in `frontend/README.md`.
-- **API:** call the backend via relative `/api/*` URLs (Vite proxies them in dev). Never hardcode the backend host.
-- **Tests:** colocate them as `*.test.tsx`. Query by role or text with React Testing Library.
+- **API:** call the backend through `src/lib/api-client.ts`, which prefixes relative `/api/v1` URLs (Vite proxies them in dev). Never hardcode the backend host. The session is an httpOnly cookie: don't store tokens or users in `localStorage`.
+- **Tests:** colocate them as `*.test.tsx`. Query by role or text with React Testing Library. Mock the API modules with `vi.mock` and build data with `src/test/fixtures.ts`.
 - **Formatting:** Prettier (single quotes, semicolons, trailing commas, width 100). Don't hand-format against it.
 
 ## Backend conventions
