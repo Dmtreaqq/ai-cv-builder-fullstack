@@ -1,0 +1,77 @@
+:root {
+  --color-text: #1f2328;
+  --color-muted: #59636e;
+  --color-bg: #ffffff;
+  --color-border: #d1d9e0;
+  --color-accent: #4f46e5;
+
+  color-scheme: light dark;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: #e6edf3;
+    --color-muted: #9198a1;
+    --color-bg: #0d1117;
+    --color-border: #3d444d;
+    --color-accent: #818cf8;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+
+.layout__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.layout__brand {
+  font-weight: 700;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.layout__nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.layout__nav a.active {
+  font-weight: 600;
+}
+
+.layout__main {
+  flex: 1;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
