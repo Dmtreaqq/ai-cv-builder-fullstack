@@ -23,6 +23,13 @@ cp .env.example .env    # set ANTHROPIC_API_KEY; JWT_SECRET, ports and the model
 Without a key everything except generation works, and a new CV ends with "AI generation is not
 configured." and a Retry button.
 
+`JWT_SECRET` signs the session cookie. If you set it, it must be at least 32 characters, or the
+backend refuses to start. Use a random value:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
 `docker compose down` stops everything; add `-v` to also delete the database. If port 8080, 5432
 or 6379 is taken, set `APP_PORT`, `POSTGRES_PORT` or `REDIS_PORT`.
 
@@ -49,7 +56,7 @@ other than `http://localhost:3000`, and set `VITE_API_PROXY_TARGET` to its URL.
 
 ## How I built it
 
-**I started with the frontend.** 
+**I started with the frontend.**
 Then I built the backend
 
 **What I decided, and why:**
