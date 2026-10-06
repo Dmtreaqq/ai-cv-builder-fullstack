@@ -2,6 +2,7 @@ import { Link } from 'react-router';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { EditorPage } from '@/features/editor/editor-page';
 import { GenerationFailed } from './generation-failed';
 import { GenerationProgress } from './generation-progress';
 import { useCv } from './use-cv';
@@ -52,9 +53,5 @@ export function CvLoader({ id }: { id: string }) {
   if (cv.status === 'failed') {
     return <GenerationFailed cv={cv} onRetry={retry} />;
   }
-  return (
-    <section className="py-10 sm:py-14">
-      <PageHeader backTo="/cvs" backLabel="All CVs" title={cv.title} meta={cv.targetRole} />
-    </section>
-  );
+  return <EditorPage cv={cv} />;
 }
