@@ -3,6 +3,7 @@ import { PageHeader } from '@/components/page-header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { CvSheet } from './cv-sheet';
+import { DownloadPdfButton } from './pdf/download-pdf-button';
 import { QuestionsPanel } from './questions-panel';
 import { SaveIndicator } from './save-indicator';
 import { SectionIndex } from './section-index';
@@ -30,6 +31,11 @@ export function EditorLayout() {
             {targetRole} · <SaveIndicator />
           </>
         }
+        actions={
+          <div className="hidden lg:block">
+            <DownloadPdfButton />
+          </div>
+        }
       />
       <Tabs
         value={view}
@@ -45,6 +51,7 @@ export function EditorLayout() {
               Preview
             </TabsTrigger>
           </TabsList>
+          <DownloadPdfButton size="sm" />
         </div>
         <div className="grid gap-8 lg:grid-cols-[150px_minmax(0,1fr)_minmax(0,0.85fr)] lg:items-start">
           <TabsContent
