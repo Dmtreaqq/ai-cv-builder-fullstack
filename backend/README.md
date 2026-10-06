@@ -14,7 +14,7 @@ mode.
 
 ```bash
 # from the repo root: start Postgres 17 (database ai_cv_builder, user/password postgres) and Redis 7
-docker compose up -d
+docker compose up -d postgres redis
 
 # then in backend/
 cp .env.example .env     # set JWT_SECRET, and ANTHROPIC_API_KEY if you have one
@@ -29,22 +29,23 @@ If port 5432 or 6379 is already taken on your machine, start the containers on o
 and point `DATABASE_URL` / `REDIS_URL` at them:
 
 ```bash
-POSTGRES_PORT=5434 REDIS_PORT=6380 docker compose up -d
+POSTGRES_PORT=5434 REDIS_PORT=6380 docker compose up -d postgres redis
 ```
 
 ## Environment
 
 Validated at boot (`src/config/env.validation.ts`). The app refuses to start if a variable is invalid.
 
-| Variable            | Required | Default                  | Notes                                                       |
-| ------------------- | -------- | ------------------------ | ----------------------------------------------------------- |
-| `DATABASE_URL`      | yes      |                          | `postgres://postgres:postgres@localhost:5432/ai_cv_builder` |
-| `JWT_SECRET`        | yes      |                          | At least 32 characters. Signs the session cookie.           |
-| `PORT`              | no       | `3000`                   |                                                             |
-| `NODE_ENV`          | no       | `development`            | `production` marks the session cookie `secure`.             |
-| `REDIS_URL`         | no       | `redis://localhost:6379` | BullMQ queue for generation.                                |
-| `ANTHROPIC_API_KEY` | no       | empty                    | Empty: the app boots, but generation and answers fail.      |
-| `ANTHROPIC_MODEL`   | no       | `claude-sonnet-5-5`      | Model for generation and answers.                           |
+| Variable            | Required | Default                  | Notes                                                         |
+| ------------------- | -------- | ------------------------ | ------------------------------------------------------------- |
+| `DATABASE_URL`      | yes      |                          | `postgres://postgres:postgres@localhost:5432/ai_cv_builder`   |
+| `JWT_SECRET`        | yes      |                          | At least 32 characters. Signs the session cookie.             |
+| `PORT`              | no       | `3000`                   |                                                               |
+| `NODE_ENV`          | no       | `development`            | `production` marks the session cookie `secure`.               |
+| `REDIS_URL`         | no       | `redis://localhost:6379` | BullMQ queue for generation.                                  |
+| `TRUST_PROXY`       | no       | `false`                  | `true` behind a reverse proxy, so rate limits see client IPs. |
+| `ANTHROPIC_API_KEY` | no       | empty                    | Empty: the app boots, but generation and answers fail.        |
+| `ANTHROPIC_MODEL`   | no       | `claude-sonnet-5-5`      | Model for generation and answers.                             |
 
 ## Database and migrations
 

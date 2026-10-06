@@ -25,5 +25,31 @@ services:
       timeout: 5s
       retries: 10
 
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ai_cv_builder
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-docker-dev-secret-change-me-0123456789abcdef}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-5-5}
+      TRUST_PROXY: 'true'
+      # Served over plain http on localhost; production would mark the session cookie Secure.
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - '${APP_PORT:-8080}:80'
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   postgres-data:

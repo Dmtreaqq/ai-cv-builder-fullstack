@@ -29,9 +29,9 @@ The dev server runs on `http://localhost:5173` and expects the backend on port 3
 ## Running against the backend
 
 The app needs the NestJS API from `backend/` (see its README): start Postgres and Redis with
-`docker compose up -d` at the repo root, then `npm run start:dev` in `backend/`. Without an
-`ANTHROPIC_API_KEY` everything works except generation, which fails with "AI generation is not
-configured." and offers Retry.
+`docker compose up -d postgres redis` at the repo root, then `npm run start:dev` in `backend/`.
+Without an `ANTHROPIC_API_KEY` everything works except generation, which fails with "AI generation
+is not configured." and offers Retry. To run the whole app in Docker instead, see the root README.
 
 The frontend calls relative `/api/v1/*` URLs. In development the Vite dev server proxies `/api` to
 `VITE_API_PROXY_TARGET` (default `http://localhost:3000`), so no CORS setup is needed.

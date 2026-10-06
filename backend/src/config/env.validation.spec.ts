@@ -42,6 +42,13 @@ describe('validate (env)', () => {
     expect(() => validate({ ...REQUIRED, REDIS_URL: 'http://cache' })).toThrow(/REDIS_URL/);
   });
 
+  it('parses TRUST_PROXY as a boolean, defaulting to false', () => {
+    expect(validate(REQUIRED).TRUST_PROXY).toBe(false);
+    expect(validate({ ...REQUIRED, TRUST_PROXY: 'true' }).TRUST_PROXY).toBe(true);
+    expect(validate({ ...REQUIRED, TRUST_PROXY: 'false' }).TRUST_PROXY).toBe(false);
+    expect(() => validate({ ...REQUIRED, TRUST_PROXY: 'yes' })).toThrow(/TRUST_PROXY/);
+  });
+
   it('boots without an Anthropic key and defaults the model', () => {
     const env = validate(REQUIRED);
 

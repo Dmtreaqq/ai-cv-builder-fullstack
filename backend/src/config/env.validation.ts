@@ -1,5 +1,6 @@
-import { plainToInstance, Type } from 'class-transformer';
+import { plainToInstance, Transform, Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsIn,
   IsInt,
   IsNotEmpty,
@@ -35,6 +36,11 @@ export class EnvironmentVariables {
   @IsUrl({ protocols: ['redis', 'rediss'], require_tld: false })
   REDIS_URL: string = 'redis://localhost:6379';
 
+  // Set behind a reverse proxy (the Docker setup) so rate limits see the client IP, not the proxy's.
+  @Transform(({ value }) => parseBooleanFlag(value))
+  @IsBoolean()
+  TRUST_PROXY: boolean = false;
+
   // Empty is allowed: the app still boots and generation fails with a clear message.
   @IsString()
   ANTHROPIC_API_KEY: string = '';
@@ -42,6 +48,12 @@ export class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   ANTHROPIC_MODEL: string = 'claude-sonnet-5-5';
+}
+
+function parseBooleanFlag(value: unknown): unknown {
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  return value;
 }
 
 export function validate(config: Record<string, unknown>): EnvironmentVariables {
