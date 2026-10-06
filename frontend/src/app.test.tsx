@@ -32,9 +32,9 @@ describe('Landing hero', () => {
     expect(screen.getByRole('link', { name: 'Build my CV' })).toHaveAttribute('href', '/register');
   });
 
-  it('shows a coming-soon note instead of the CTA when signed in', () => {
+  it('links the CTA to the dashboard when signed in', () => {
     renderAt('/', { id: '1', email: 'user@example.com' });
-    expect(screen.getByText('CV creation is coming soon.')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Go to my CVs' })).toHaveAttribute('href', '/cvs');
     expect(screen.queryByRole('link', { name: 'Build my CV' })).not.toBeInTheDocument();
   });
 });

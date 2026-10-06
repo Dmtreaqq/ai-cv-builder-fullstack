@@ -21,7 +21,14 @@ export function Layout() {
           <nav aria-label="Account" className="flex min-w-0 items-center gap-1 sm:gap-2">
             {user ? (
               <>
-                <span className="truncate text-sm text-muted-foreground">{user.email}</span>
+                <span className="hidden truncate text-sm text-muted-foreground md:inline">
+                  {user.email}
+                </span>
+                <Button asChild variant="ghost">
+                  <NavLink to="/cvs" end>
+                    My CVs
+                  </NavLink>
+                </Button>
                 <Button variant="ghost" onClick={handleLogout}>
                   Log out
                 </Button>

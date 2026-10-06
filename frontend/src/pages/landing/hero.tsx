@@ -23,18 +23,14 @@ export function Hero() {
           review, edit and download a tailored CV as a PDF.
         </p>
         <ComposerPreview />
-        {user ? (
-          <p className="text-sm text-muted-foreground">CV creation is coming soon.</p>
-        ) : (
-          <div>
-            <Button asChild size="lg">
-              <Link to="/register">
-                Build my CV
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
-          </div>
-        )}
+        <div>
+          <Button asChild size="lg">
+            <Link to={user ? '/cvs' : '/register'}>
+              {user ? 'Go to my CVs' : 'Build my CV'}
+              <ArrowRight data-icon="inline-end" />
+            </Link>
+          </Button>
+        </div>
       </div>
       <CvSheetPreview />
     </section>
