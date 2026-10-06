@@ -35,6 +35,12 @@ describe('UsersService', () => {
     create: jest.fn((data: Partial<User>) => Object.assign(new User(), data)),
     save: jest.fn<(user: User) => Promise<User>>(),
     findOneBy: jest.fn<(where: Partial<User>) => Promise<User | null>>(),
+    createQueryBuilder: jest.fn(() => queryBuilder),
+  };
+  const queryBuilder = {
+    addSelect: jest.fn(() => queryBuilder),
+    where: jest.fn(() => queryBuilder),
+    getOne: jest.fn<() => Promise<User | null>>(),
   };
   let service: UsersService;
 
@@ -106,6 +112,19 @@ describe('UsersService', () => {
       await expect(service.findOne(USER_ID)).rejects.toThrow(
         new NotFoundException('User not found'),
       );
+    });
+  });
+
+  describe('findByEmailWithPasswordHash', () => {
+    it('selects the hidden password hash for the email', async () => {
+      const user = storedUser({ passwordHash: 'hash' });
+      queryBuilder.getOne.mockResolvedValue(user);
+
+      await expect(service.findByEmailWithPasswordHash('ada@example.com')).resolves.toBe(user);
+      expect(queryBuilder.addSelect).toHaveBeenCalledWith('user.passwordHash');
+      expect(queryBuilder.where).toHaveBeenCalledWith('user.email = :email', {
+        email: 'ada@example.com',
+      });
     });
   });
 });

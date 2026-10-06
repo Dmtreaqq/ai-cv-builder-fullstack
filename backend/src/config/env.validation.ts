@@ -1,5 +1,7 @@
 import { plainToInstance, Type } from 'class-transformer';
-import { IsInt, IsString, IsUrl, Max, Min, validateSync } from 'class-validator';
+import { IsIn, IsInt, IsString, IsUrl, Max, Min, MinLength, validateSync } from 'class-validator';
+
+export const NODE_ENVS = ['development', 'production', 'test'] as const;
 
 export class EnvironmentVariables {
   @IsString()
@@ -11,6 +13,13 @@ export class EnvironmentVariables {
   @Min(1)
   @Max(65535)
   PORT: number = 3000;
+
+  @IsString()
+  @MinLength(32, { message: 'JWT_SECRET must be at least 32 characters long' })
+  JWT_SECRET: string;
+
+  @IsIn(NODE_ENVS)
+  NODE_ENV: (typeof NODE_ENVS)[number] = 'development';
 }
 
 export function validate(config: Record<string, unknown>): EnvironmentVariables {
